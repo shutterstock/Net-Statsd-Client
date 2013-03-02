@@ -77,8 +77,8 @@ Shutterstock::Statsd - Send data to StatsD / Graphite
 
 =head1 SYNOPSIS
 
-    use Shutterstock::Statsd;
-    my $stats = Shutterstock::Statsd->new(prefix => "service.frobnitzer.");
+    use Statsd::Client
+    my $stats = Statsd::Client->new(prefix => "service.frobnitzer.");
     $stats->increment("requests"); # service.frobnitzer.requests++ in graphite
 
     my $timer = $stats->timer("request_duration");
@@ -120,6 +120,6 @@ Record an event of duration C<$time> for the named timing metric.
 
 =head2 $stats->timer($metric, [$sample_rate])
 
-Returns a L<Shutterstock::Statsd::Timer> object for the named timing metric.
+Returns a L<Statsd::Client::Timer> object for the named timing metric.
 The timer begins when you call this method, and ends when you call C<finish>
 on the timer.

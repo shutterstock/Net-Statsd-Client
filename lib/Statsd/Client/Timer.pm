@@ -49,12 +49,12 @@ __END__
 
 =head1 NAME
 
-Shutterstock::Statsd::Timer - Measure event timings and send them to StatsD
+Statsd::Client::Timer - Measure event timings and send them to StatsD
 
 =head1 SYNOPSIS
 
-    use Shutterstock::Statsd;
-    my $stats = Shutterstock::Statsd->new(prefix => "service.frobnitzer.");
+    use Statsd::Client;
+    my $stats = Statsd::Client->new(prefix => "service.frobnitzer.");
 
     my $timer = $stats->timer("request_duration");
     # ... do something expensive ...
@@ -62,9 +62,9 @@ Shutterstock::Statsd::Timer - Measure event timings and send them to StatsD
 
 =head1 METHODS
 
-=head2 Shutterstock::Statsd::Timer->new(...)
+=head2 Statsd::Client::Timer->new(...)
 
-To build a timer object, call L<Shutterstock::Statsd>'s C<timer> method,
+To build a timer object, call L<Statsd::Client>'s C<timer> method,
 instead of calling this constructor directly.
 
 A timer has an associated statsd object, metric name, and sample rate, and
