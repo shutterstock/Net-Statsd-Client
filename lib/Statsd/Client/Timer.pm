@@ -1,4 +1,7 @@
 package Statsd::Client::Timer;
+use strict;
+use warnings;
+
 use Time::HiRes qw(gettimeofday tv_interval);
 
 # ABSTRACT: Measure event timings and send them to StatsD
