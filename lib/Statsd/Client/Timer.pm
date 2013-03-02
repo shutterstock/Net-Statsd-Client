@@ -1,6 +1,10 @@
 package Statsd::Client::Timer;
 use Time::HiRes qw(gettimeofday tv_interval);
 
+# ABSTRACT: Measure event timings and send them to StatsD
+# VERSION
+# AUTHORITY
+
 sub new {
   my ($class, %args) = @_;
 
@@ -46,10 +50,6 @@ sub DESTROY {
 1;
 
 __END__
-
-=head1 NAME
-
-Statsd::Client::Timer - Measure event timings and send them to StatsD
 
 =head1 SYNOPSIS
 

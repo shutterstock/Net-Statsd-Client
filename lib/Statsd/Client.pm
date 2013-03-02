@@ -2,6 +2,10 @@ package Statsd::Client;
 use strict;
 use warnings;
 
+# ABSTRACT: Send data to StatsD / Graphite
+# VERSION
+# AUTHORITY
+
 use Etsy::StatsD;
 use Statsd::Client::Timer;
 
@@ -70,10 +74,6 @@ sub timer {
 1;
 
 __END__
-
-=head1 NAME
-
-Statsd::Client - Send data to StatsD / Graphite
 
 =head1 SYNOPSIS
 
