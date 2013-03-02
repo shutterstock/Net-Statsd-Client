@@ -73,7 +73,7 @@ __END__
 
 =head1 NAME
 
-Shutterstock::Statsd - Send data to StatsD / Graphite
+Statsd::Client - Send data to StatsD / Graphite
 
 =head1 SYNOPSIS
 
