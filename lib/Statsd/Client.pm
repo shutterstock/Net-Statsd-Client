@@ -21,6 +21,8 @@ sub new {
   $self->{host} = $args{host} || "localhost";
   $self->{port} = $args{port} || 8125;
 
+  Statsd::Client::Raw::set_mtu($self->{host}, $self->{port}, $args{mtu}) if defined $args{mtu};
+
   return bless $self, $class;
 }
 
@@ -29,6 +31,11 @@ sub send {
   $sample_rate = $self->{sample_rate} unless defined $sample_rate;
   my $message = sprintf "%s%s:%s|%s", $self->{prefix}, $metric, $value, $type;
   Statsd::Client::Raw::send($self->{host}, $self->{port}, $message, $sample_rate);
+}
+
+sub flush {
+  my ($self) = @_;
+  Statsd::Client::Raw::flush($self->{host}, $self->{port});
 }
 
 sub increment {
