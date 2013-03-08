@@ -6,18 +6,10 @@ use warnings;
 # VERSION
 # AUTHORITY
 
-use Etsy::StatsD;
+use Statsd::Client::Raw;
 use Statsd::Client::Timer;
 
 my $statsd;
-
-sub instance {
-  my $class = shift;
-  unless (defined $statsd) {
-    $statsd = $class->_build_statsd;
-  }
-  return $statsd;
-}
 
 sub new {
   my $class = shift;
@@ -29,36 +21,34 @@ sub new {
   $self->{host} = $args{host} || "localhost";
   $self->{port} = $args{port} || 8125;
 
-  $self->{statsd} = Etsy::StatsD->new($self->{host}, $self->{port});
-
   return bless $self, $class;
+}
+
+sub send {
+  my ($self, $metric, $value, $type, $sample_rate) = @_;
+  $sample_rate = $self->{sample_rate} unless defined $sample_rate;
+  my $message = sprintf "%s%s:%s|%s", $self->{prefix}, $metric, $value, $type;
+  Statsd::Client::Raw::send($self->{host}, $self->{port}, $message, $sample_rate);
 }
 
 sub increment {
   my ($self, $metric, $sample_rate) = @_;
-  $metric = "$self->{prefix}$metric";
-  $sample_rate = $self->{sample_rate} unless defined $sample_rate;
-  $self->{statsd}->increment($metric, $sample_rate);
+  $self->send($metric, 1, "c", $sample_rate);
 }
 
 sub decrement {
   my ($self, $metric, $sample_rate) = @_;
-  $metric = "$self->{prefix}$metric";
-  $sample_rate = $self->{sample_rate} unless defined $sample_rate;
-  $self->{statsd}->decrement($metric, $sample_rate);
+  $self->send($metric, -1, "c", $sample_rate);
 }
 
 sub update {
   my ($self, $metric, $value, $sample_rate) = @_;
-  $metric = "$self->{prefix}$metric";
-  $sample_rate = $self->{sample_rate} unless defined $sample_rate;
-  $self->{statsd}->update($metric, $value, $sample_rate);
+  $self->send($metric, $value, "c", $sample_rate);
 }
 
 sub timing {
   my ($self, $metric, $time, $sample_rate) = @_;
-  $metric = "$self->{prefix}$metric";
-  $self->{statsd}->timing($metric, $time, $sample_rate);
+  $self->send($metric, $time, "ms", $sample_rate);
 }
 
 sub timer {
