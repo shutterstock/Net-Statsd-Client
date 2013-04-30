@@ -28,7 +28,7 @@ sub new {
 sub finish {
   my ($self) = @_;
   my $duration = tv_interval($self->{start});
-  $self->{statsd}->timing(
+  $self->{statsd}->timing_ms(
     $self->{metric},
     $duration,
     $self->{sample_rate},
