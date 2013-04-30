@@ -55,7 +55,7 @@ sub update {
   $self->{statsd}->update($metric, $value, $sample_rate);
 }
 
-sub timing {
+sub timing_ms {
   my ($self, $metric, $time, $sample_rate) = @_;
   $metric = "$self->{prefix}$metric";
   $self->{statsd}->timing($metric, $time, $sample_rate);
@@ -114,9 +114,9 @@ Decrement the named counter metric.
 
 Add C<$count> to the value of the named counter metric.
 
-=head2 $stats->timing($metric, $time, [$sample_rate])
+=head2 $stats->timing_ms($metric, $time, [$sample_rate])
 
-Record an event of duration C<$time> for the named timing metric.
+Record an event of duration C<$time> milliseconds for the named timing metric.
 
 =head2 $stats->timer($metric, [$sample_rate])
 
