@@ -13,7 +13,7 @@ nytprof*
 .DS_Store
 MYMETA.yml
 *.o
-Statsd-Client*
+Net-Statsd-Client*
 .carton
 local
 carton.lock
