@@ -14,3 +14,6 @@ nytprof*
 MYMETA.yml
 *.o
 Statsd-Client*
+.carton
+local
+carton.lock

@@ -1,22 +1,15 @@
-package Shutterstock::Statsd;
+package Net::Statsd::Client;
 use strict;
 use warnings;
 
+# ABSTRACT: Send data to StatsD / Graphite
+# VERSION
+# AUTHORITY
+
 use Etsy::StatsD;
-use Shutterstock::Statsd::Timer;
-use Shutterstock::Config;
+use Net::Statsd::Client::Timer;
 
-my ($statsd, $config);
-
-sub _build_statsd {
-  my $class = shift;
-  $config ||= Shutterstock::Config->instance;
-
-  my $host = $config->{statsd}{host};
-  my $port = $config->{statsd}{port} || 8125;
-
-  return Etsy::StatsD->new($host, $port);
-}
+my $statsd;
 
 sub instance {
   my $class = shift;
@@ -30,18 +23,13 @@ sub new {
   my $class = shift;
   my %args = @_;
   my $self = {};
-  $config ||= Shutterstock::Config->instance;
 
   $self->{prefix} = $args{prefix} || "";
-  my $site_mode = $config->{site_mode};
-  if ($site_mode eq 'test') {
-    $self->{prefix} = "dev.$self->{prefix}";
-  } elsif ($site_mode eq 'qa') {
-    $self->{prefix} = "qa.$self->{prefix}";
-  }
-
   $self->{sample_rate} = defined $args{sample_rate} ? $args{sample_rate} : 1;
-  $self->{statsd} = $class->instance;
+  $self->{host} = $args{host} || "localhost";
+  $self->{port} = $args{port} || 8125;
+
+  $self->{statsd} = Etsy::StatsD->new($self->{host}, $self->{port});
 
   return bless $self, $class;
 }
@@ -67,7 +55,7 @@ sub update {
   $self->{statsd}->update($metric, $value, $sample_rate);
 }
 
-sub timing {
+sub timing_ms {
   my ($self, $metric, $time, $sample_rate) = @_;
   $metric = "$self->{prefix}$metric";
   $self->{statsd}->timing($metric, $time, $sample_rate);
@@ -76,7 +64,7 @@ sub timing {
 sub timer {
   my ($self, $metric, $sample_rate) = @_;
 
-  return Shutterstock::Statsd::Timer->new(
+  return Net::Statsd::Client::Timer->new(
     statsd => $self,
     metric => $metric,
     sample_rate => $sample_rate,
@@ -87,14 +75,10 @@ sub timer {
 
 __END__
 
-=head1 NAME
-
-Shutterstock::Statsd - Send data to StatsD / Graphite
-
 =head1 SYNOPSIS
 
-    use Shutterstock::Statsd;
-    my $stats = Shutterstock::Statsd->new(prefix => "service.frobnitzer.");
+    use Net::Statsd::Client
+    my $stats = Net::Statsd::Client->new(prefix => "service.frobnitzer.");
     $stats->increment("requests"); # service.frobnitzer.requests++ in graphite
 
     my $timer = $stats->timer("request_duration");
@@ -130,12 +114,12 @@ Decrement the named counter metric.
 
 Add C<$count> to the value of the named counter metric.
 
-=head2 $stats->timing($metric, $time, [$sample_rate])
+=head2 $stats->timing_ms($metric, $time, [$sample_rate])
 
-Record an event of duration C<$time> for the named timing metric.
+Record an event of duration C<$time> milliseconds for the named timing metric.
 
 =head2 $stats->timer($metric, [$sample_rate])
 
-Returns a L<Shutterstock::Statsd::Timer> object for the named timing metric.
+Returns a L<Net::Statsd::Client::Timer> object for the named timing metric.
 The timer begins when you call this method, and ends when you call C<finish>
 on the timer.

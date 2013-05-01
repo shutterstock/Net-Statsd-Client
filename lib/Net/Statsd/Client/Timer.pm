@@ -1,5 +1,12 @@
-package Shutterstock::Statsd::Timer;
+package Net::Statsd::Client::Timer;
+use strict;
+use warnings;
+
 use Time::HiRes qw(gettimeofday tv_interval);
+
+# ABSTRACT: Measure event timings and send them to StatsD
+# VERSION
+# AUTHORITY
 
 sub new {
   my ($class, %args) = @_;
@@ -21,7 +28,7 @@ sub new {
 sub finish {
   my ($self) = @_;
   my $duration = tv_interval($self->{start});
-  $self->{statsd}->timing(
+  $self->{statsd}->timing_ms(
     $self->{metric},
     $duration,
     $self->{sample_rate},
@@ -47,14 +54,10 @@ sub DESTROY {
 
 __END__
 
-=head1 NAME
-
-Shutterstock::Statsd::Timer - Measure event timings and send them to StatsD
-
 =head1 SYNOPSIS
 
-    use Shutterstock::Statsd;
-    my $stats = Shutterstock::Statsd->new(prefix => "service.frobnitzer.");
+    use Net::Statsd::Client;
+    my $stats = Net::Statsd::Client->new(prefix => "service.frobnitzer.");
 
     my $timer = $stats->timer("request_duration");
     # ... do something expensive ...
@@ -62,9 +65,9 @@ Shutterstock::Statsd::Timer - Measure event timings and send them to StatsD
 
 =head1 METHODS
 
-=head2 Shutterstock::Statsd::Timer->new(...)
+=head2 Net::Statsd::Client::Timer->new(...)
 
-To build a timer object, call L<Shutterstock::Statsd>'s C<timer> method,
+To build a timer object, call L<Net::Statsd::Client>'s C<timer> method,
 instead of calling this constructor directly.
 
 A timer has an associated statsd object, metric name, and sample rate, and
