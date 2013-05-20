@@ -1,0 +1,5 @@
+{{$NEXT}}
+  * First public release.
+0.03
+  * Internal Shutterstock release
+  * Extracted from Shutterstock::Statsd
