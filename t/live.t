@@ -3,13 +3,14 @@ use strict;
 use warnings;
 use Test::More;
 
-use_ok 'Net::Statsd::Client';
 use IO::Socket;
 my $sock = IO::Socket::INET->new(
   LocalPort => 8125,
   Proto => "udp",
   Blocking => 0,
-) or die "Can't bind: $@";
+) or plan skip_all => "Can't listen UDP";
+
+use_ok 'Net::Statsd::Client';
 
 sub sends_ok (&@) {
   my ($code, $pattern, $desc) = @_;
