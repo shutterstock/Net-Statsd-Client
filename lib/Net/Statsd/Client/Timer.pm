@@ -30,7 +30,7 @@ sub finish {
   my $duration = tv_interval($self->{start});
   $self->{statsd}->timing_ms(
     $self->{metric},
-    $duration,
+    $duration * 1000,
     $self->{sample_rate},
   );
   delete $self->{_pending};
