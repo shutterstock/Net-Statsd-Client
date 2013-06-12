@@ -89,3 +89,18 @@ Stop timing, but do not send the elapsed time to the server. A timer that
 goes out of scope without having C<finish> or C<cancel> called on it will
 generate a warning, since this probably points to bugs and lost timing
 information.
+
+=head2 $timer->metric($new)
+
+Change the metric name of a timer on the fly. This is useful if you don't
+know what kind of event you're timing until it's finished. Harebrained
+example:
+
+    my $timer = $statsd->timer("item.fetch");
+    my $item = $cache->get("blah");
+    if ($item) {
+        $timer->metric("item.fetch_from_cache");
+    } else {
+        $item = get_it_the_long_way();
+    }
+    $timer->finish;
