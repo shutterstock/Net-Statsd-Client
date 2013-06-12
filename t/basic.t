@@ -1,23 +1,38 @@
 #!perl
 use strict;
 use warnings;
+
+package t::Mock::Socket;
+
+sub TIEHANDLE {
+  my ($class, $target) = @_;
+  return bless { target => $target }, $class;
+}
+
+sub PRINT {
+  my $self = shift;
+  my $delim = defined($,) ? $, : "";
+  my $terminator = defined($\) ? $\ : "";
+
+  ${ $self->{target} } .= join($delim, @_) . $terminator;
+}
+
+package main;
+
 use Test::More;
-
-use IO::Socket;
-
-plan skip_all => "Live testing disabled except for RELEASE_TESTING" unless $ENV{RELEASE_TESTING};
-
-my $sock = IO::Socket::INET->new(
-  LocalPort => 8125,
-  Proto => "udp",
-  Blocking => 0,
-) or plan skip_all => "Can't listen UDP";
 
 use_ok 'Net::Statsd::Client';
 
+my $client = Net::Statsd::Client->new;
+
 sub sends_ok (&@) {
   my ($code, $pattern, $desc) = @_;
+  my $sent;
+
   my $ok = eval {
+    local *MOCKET;
+    tie *MOCKET, 't::Mock::Socket', \$sent;
+    local $client->{statsd}{socket} = \*MOCKET;
     $code->();
     1;
   };
@@ -26,17 +41,8 @@ sub sends_ok (&@) {
     fail $desc;
     return;
   }
-  my $buf;
-  my $ret = recv $sock, $buf, 8192, 0;
-  if (!defined $ret) {
-    diag "recv failed with $!";
-    fail $desc;
-    return;
-  }
-  like $buf, $pattern, $desc;
+  like $sent, $pattern, $desc;
 }
-
-my $client = Net::Statsd::Client->new;
 
 sends_ok { $client->increment("foo1") } qr/foo1:1\|c/, "increment";
 sends_ok { $client->decrement("foo2") } qr/foo2:-1\|c/, "decrement";
