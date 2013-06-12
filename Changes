@@ -1,5 +1,10 @@
 {{$NEXT}}
-
+  * Use Moo. This makes the code a little more manageable and has a
+    negligible impact on speed.
+  * Don't run failure-prone "live" tests on install or CPANtesters, add a
+    set of non-live tests.
+  * Add the ability to re-target the metric of a timer between starting and
+    finishing it.
 0.11      2013-06-03 15:28:30 America/New_York
   * Make timers report their times in ms like they should
 0.10      2013-05-19 21:33:44 EST5EDT
