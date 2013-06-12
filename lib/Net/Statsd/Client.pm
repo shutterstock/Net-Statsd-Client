@@ -9,16 +9,6 @@ use warnings;
 use Etsy::StatsD;
 use Net::Statsd::Client::Timer;
 
-my $statsd;
-
-sub instance {
-  my $class = shift;
-  unless (defined $statsd) {
-    $statsd = $class->_build_statsd;
-  }
-  return $statsd;
-}
-
 sub new {
   my $class = shift;
   my %args = @_;
