@@ -41,6 +41,14 @@ sub cancel {
   delete $self->{_pending};
 }
 
+sub metric {
+  my $self = shift;
+  if (@_) {
+    $self->{metric} = $_[0];
+  }
+  return $self->{metric};
+}
+
 sub DESTROY {
   my ($self) = @_;
   if ($self->{_pending}) {
