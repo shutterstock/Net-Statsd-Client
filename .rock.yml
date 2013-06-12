@@ -3,3 +3,12 @@ runtime: perl516
 install_author_deps: |
     cpanm --notest -L local Dist::Zilla
     dzil authordeps | cpanm --notest -L local
+
+build: |
+    dzil listdeps | cpanm --notest -L local
+
+test: |
+    dzil test
+
+prove: |
+    dzil run prove ${ROCK_ARGV}
