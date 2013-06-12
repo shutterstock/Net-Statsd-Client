@@ -1,6 +1,6 @@
 package Net::Statsd::Client;
-use strict;
-use warnings;
+use Moo;
+use Sub::Quote;
 
 # ABSTRACT: Send data to StatsD / Graphite
 # VERSION
@@ -9,19 +9,35 @@ use warnings;
 use Etsy::StatsD;
 use Net::Statsd::Client::Timer;
 
-sub new {
-  my $class = shift;
-  my %args = @_;
-  my $self = {};
+has 'prefix' => (
+  is => 'ro',
+  default => quote_sub q{''},
+);
 
-  $self->{prefix} = $args{prefix} || "";
-  $self->{sample_rate} = defined $args{sample_rate} ? $args{sample_rate} : 1;
-  $self->{host} = $args{host} || "localhost";
-  $self->{port} = $args{port} || 8125;
+has 'sample_rate' => (
+  is => 'ro',
+  default => quote_sub q{1},
+);
 
-  $self->{statsd} = Etsy::StatsD->new($self->{host}, $self->{port});
+has 'host' => (
+  is => 'ro',
+  default => quote_sub q{'localhost'},
+);
 
-  return bless $self, $class;
+has 'port' => (
+  is => 'ro',
+  default => quote_sub q{8125},
+);
+
+has 'statsd' => (
+  is => 'rw',
+);
+
+sub BUILD {
+  my ($self) = @_;
+  $self->statsd(
+    Etsy::StatsD->new($self->host, $self->port)
+  );
 }
 
 sub increment {

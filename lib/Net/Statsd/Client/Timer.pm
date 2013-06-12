@@ -1,28 +1,34 @@
 package Net::Statsd::Client::Timer;
-use strict;
-use warnings;
-
-use Time::HiRes qw(gettimeofday tv_interval);
+use Moo;
+use Sub::Quote;
 
 # ABSTRACT: Measure event timings and send them to StatsD
 # VERSION
 # AUTHORITY
 
-sub new {
-  my ($class, %args) = @_;
+use Time::HiRes qw(gettimeofday tv_interval);
 
-  my $start = [gettimeofday];
+has 'statsd' => (
+  is => 'ro',
+  required => 1,
+);
+
+has '_pending' => (
+  is => 'rw',
+  default => quote_sub q{1},
+);
+
+has ['metric', 'start', '_file', '_line'] => (
+  is => 'rw',
+);
+
+sub BUILD {
+  my ($self) = @_;
   my (undef, $file, $line) = caller(1);
 
-  my $self = {
-    %args,
-    start => $start,
-    _file => $file,
-    _line => $line,
-    _pending => 1,
-  };
-
-  return bless $self, $class;
+  $self->start([gettimeofday]);
+  $self->_file($file);
+  $self->_line($line);
 }
 
 sub finish {
@@ -41,15 +47,7 @@ sub cancel {
   delete $self->{_pending};
 }
 
-sub metric {
-  my $self = shift;
-  if (@_) {
-    $self->{metric} = $_[0];
-  }
-  return $self->{metric};
-}
-
-sub DESTROY {
+sub DEMOLISH {
   my ($self) = @_;
   if ($self->{_pending}) {
     my $metric = $self->{metric};
