@@ -33,6 +33,10 @@ has 'statsd' => (
   is => 'rw',
 );
 
+has 'warning_callback' => (
+  is => 'rw',
+);
+
 sub BUILD {
   my ($self) = @_;
   $self->statsd(
@@ -74,6 +78,7 @@ sub timer {
     statsd => $self,
     metric => $metric,
     sample_rate => $sample_rate,
+    warning_callback => $self->warning_callback,
   );
 }
 
