@@ -1,5 +1,6 @@
 {{$NEXT}}
-
+  * Allow setting a callback that will be used to emit a warning when a
+    timer is destroyed unexpectedly. Idea courtesy of rjbs.
 0.20      2013-06-12 17:15:47 America/New_York
   * Use Moo. This makes the code a little more manageable and has a
     negligible impact on speed.
