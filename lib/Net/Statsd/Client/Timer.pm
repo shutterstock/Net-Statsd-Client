@@ -50,7 +50,7 @@ sub cancel {
 sub emit_warning {
   my $self = shift;
   if (defined $self->warning_callback) {
-    $self->warning_callback(@_);
+    $self->warning_callback->(@_);
   } else {
     warn(@_);
   }
