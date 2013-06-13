@@ -33,6 +33,10 @@ has 'statsd' => (
   is => 'rw',
 );
 
+has 'warning_callback' => (
+  is => 'rw',
+);
+
 sub BUILD {
   my ($self) = @_;
   $self->statsd(
@@ -74,6 +78,7 @@ sub timer {
     statsd => $self,
     metric => $metric,
     sample_rate => $sample_rate,
+    warning_callback => $self->warning_callback,
   );
 }
 
@@ -105,6 +110,12 @@ will actually be sent to the server. This sets the default sample rate,
 which can be overridden on a case-by-case basis when sending an event (for
 instance, you might choose to send errors at a 100% sample rate, but other
 events at 1%).
+
+=head2 warning_callback
+
+B<Optional:> A function that will be called with a message if a C<timer>
+is destroyed unexpectedly (see L<Net::Statsd::Timer>). If this is not set
+the builtin C<warn> will be used.
 
 =head1 METHODS
 

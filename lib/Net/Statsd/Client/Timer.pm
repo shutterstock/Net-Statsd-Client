@@ -18,7 +18,7 @@ has '_pending' => (
   default => quote_sub q{1},
 );
 
-has ['metric', 'start', '_file', '_line'] => (
+has ['metric', 'start', '_file', '_line', 'warning_callback'] => (
   is => 'rw',
 );
 
@@ -47,12 +47,21 @@ sub cancel {
   delete $self->{_pending};
 }
 
+sub emit_warning {
+  my $self = shift;
+  if (defined $self->warning_callback) {
+    $self->warning_callback->(@_);
+  } else {
+    warn(@_);
+  }
+}
+
 sub DEMOLISH {
   my ($self) = @_;
   if ($self->{_pending}) {
     my $metric = $self->{metric};
     $metric = $self->{statsd}{prefix} . $metric if $self->{statsd} && $self->{statsd}{prefix};
-    warn "Unfinished timer for stat $metric (created at $self->{_file} line $self->{_line})";
+    $self->emit_warning("Unfinished timer for stat $metric (created at $self->{_file} line $self->{_line})");
   }
 }
 
