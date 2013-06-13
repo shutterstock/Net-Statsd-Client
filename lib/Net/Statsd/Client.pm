@@ -111,6 +111,12 @@ which can be overridden on a case-by-case basis when sending an event (for
 instance, you might choose to send errors at a 100% sample rate, but other
 events at 1%).
 
+=head2 warning_callback
+
+B<Optional:> A function that will be called with a message if a C<timer>
+is destroyed unexpectedly (see L<Net::Statsd::Timer>). If this is not set
+the builtin C<warn> will be used.
+
 =head1 METHODS
 
 =head2 $stats->increment($metric, [$sample_rate])
