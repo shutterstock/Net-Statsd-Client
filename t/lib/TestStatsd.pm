@@ -1,5 +1,18 @@
 package TestStatsd;
 
+our $ALWAYS_SAMPLE = 0;
+
+BEGIN {
+  our $ALWAYS_SAMPLE = 0;
+  *CORE::GLOBAL::rand = sub {
+    if ($ALWAYS_SAMPLE) {
+      return 0; # rand() < $sample_rate will now always be true unless $sample_rate is 0
+    } else {
+      return &CORE::rand(@_);
+    }
+  };
+}
+  
 use Test::More;
 use Exporter 'import';
 our @EXPORT = qw(sends_ok);
