@@ -1,18 +1,3 @@
-package TestStatsd::MockSocket;
-
-sub TIEHANDLE {
-  my ($class, $target) = @_;
-  return bless { target => $target }, $class;
-}
-
-sub PRINT {
-  my $self = shift;
-  my $delim = defined($,) ? $, : "";
-  my $terminator = defined($\) ? $\ : "";
-
-  ${ $self->{target} } .= join($delim, @_) . $terminator;
-}
-
 package TestStatsd;
 
 use Test::More;
@@ -24,9 +9,10 @@ sub sends_ok (&@) {
   my $sent;
 
   my $ok = eval {
-    local *MOCKET;
-    tie *MOCKET, 'TestStatsd::MockSocket', \$sent;
-    local $client->{statsd}{socket} = \*MOCKET;
+    no warnings 'redefine';
+    local *Etsy::StatsD::_send_to_sock = sub {
+      $sent .= $_[1];
+    };
     $code->();
     1;
   };
