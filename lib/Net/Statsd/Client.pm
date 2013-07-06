@@ -6,7 +6,7 @@ use Sub::Quote;
 # VERSION
 # AUTHORITY
 
-use Etsy::StatsD;
+use Etsy::StatsD 1.001;
 use Net::Statsd::Client::Timer;
 
 has 'prefix' => (
