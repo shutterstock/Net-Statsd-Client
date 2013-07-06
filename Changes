@@ -1,5 +1,8 @@
 {{$NEXT}}
-
+  * Depend on Etsy::StatsD 1.001. This fixes a bug which would sometimes
+    cause corrupted partial metrics to be sent (thanks Ricardo Signes and
+    Steve Sanbeg).
+  * Fix tests to pass with Etsy::StatsD 1.001.
 0.21      2013-06-13 17:48:49 America/New_York
   * Allow setting a callback that will be used to emit a warning when a
     timer is destroyed unexpectedly. Idea courtesy of rjbs.
