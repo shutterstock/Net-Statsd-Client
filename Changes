@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.22      2013-07-06 14:41:13 EST5EDT
   * Depend on Etsy::StatsD 1.001. This fixes a bug which would sometimes
     cause corrupted partial metrics to be sent (thanks Ricardo Signes and
     Steve Sanbeg).
