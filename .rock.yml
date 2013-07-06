@@ -15,3 +15,6 @@ release_test: |
 
 prove: |
     exec dzil run prove ${ROCK_ARGV}
+
+dzil: |
+    exec dzil ${ROCK_ARGV}
