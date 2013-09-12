@@ -144,8 +144,9 @@ Add C<$count> to the value of the named counter metric.
 
 Record an event of duration C<$time> milliseconds for the named timing metric.
 
-=head2 $stats->timer($metric, [$sample_rate])
+=head2 $stats->timer([$metric], [$sample_rate])
 
 Returns a L<Net::Statsd::Client::Timer> object for the named timing metric.
 The timer begins when you call this method, and ends when you call C<finish>
-on the timer.
+on the timer. For more on timers see 
+L<Net::Statsd::Client::Timer/"USING TIMERS AND CHECKPOINTS">.
