@@ -98,6 +98,15 @@ __END__
 
 =head1 ATTRIBUTES
 
+=head2 host
+
+B<Optional:> The hostname of the StatsD server to connect to. Defaults to
+localhost.
+
+=head2 port
+
+B<Optional:> The port number to connect to. Defaults to 8125.
+
 =head2 prefix
 
 B<Optional:> A prefix to be added to all metric names logged throught his
