@@ -71,6 +71,18 @@ sub timing_ms {
   $self->{statsd}->timing($metric, $time, $sample_rate);
 }
 
+sub gauge {
+  my ($self, $metric, $value, $sample_rate) = @_;
+  $metric = "$self->{prefix}$metric";
+  $self->{statsd}->send({ $metric => "$value|g" }, $sample_rate);
+}
+
+sub set_add {
+  my ($self, $metric, $value, $sample_rate) = @_;
+  $metric = "$self->{prefix}$metric";
+  $self->{statsd}->send({ $metric => "$value|s" }, $sample_rate);
+}
+
 sub timer {
   my ($self, $metric, $sample_rate) = @_;
 
@@ -149,3 +161,17 @@ Record an event of duration C<$time> milliseconds for the named timing metric.
 Returns a L<Net::Statsd::Client::Timer> object for the named timing metric.
 The timer begins when you call this method, and ends when you call C<finish>
 on the timer.
+
+=head2 $stats->gauge($metric, $value, [$sample_rate])
+
+Send a value for the named gauge metric. Instead of adding up like counters
+or producing a large number of quantiles like timings, gauges simply take
+the last value sent in any time period, and don't require scaling.
+
+=head2 $statsd->set_add($metric, $value, [$sample_rate])
+
+Add a value to the named set metric. Sets count the number of *unique*
+values they see in each time period, letting you estimate, for example, the
+number of users using a site at a time by adding their userids to a set each
+time they load a page.
+
