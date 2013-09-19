@@ -22,4 +22,7 @@ sends_ok {
   $timer->finish;
 } $client, qr/foo5:[\d\.]+\|ms/, "timer";
 
+sends_ok { $client->gauge("luftballons", 99) } $client, qr/luftballons:99\|g/, "gauge";
+sends_ok { $client->set_add("users", "gary") } $client, qr/users:gary\|s/, "set";
+
 done_testing;
