@@ -44,43 +44,43 @@ sub BUILD {
   );
 }
 
+sub _send {
+  my ($self, $data, $sample_rate) = @_;
+
+  $self->{statsd}->send(
+    { "$self->{prefix}$data->{metric}" => "$data->{value}|$data->{type}" },
+    ( defined($data->{sample_rate}) ? $data->{sample_rate} : $self->{sample_rate} ),
+  );
+}
+    
 sub increment {
-  my ($self, $metric, $sample_rate) = @_;
-  $metric = "$self->{prefix}$metric";
-  $sample_rate = $self->{sample_rate} unless defined $sample_rate;
-  $self->{statsd}->increment($metric, $sample_rate);
+  # ($self, $metric, [$sample_rate])
+  $_[0]->_send({ metric => $_[1], value => 1, type => "c", sample_rate => $_[2] });
 }
 
 sub decrement {
-  my ($self, $metric, $sample_rate) = @_;
-  $metric = "$self->{prefix}$metric";
-  $sample_rate = $self->{sample_rate} unless defined $sample_rate;
-  $self->{statsd}->decrement($metric, $sample_rate);
+  # ($self, $metric, [$sample_rate])
+  $_[0]->_send({ metric => $_[1], value => -1, type => "c", sample_rate => $_[2] });
 }
 
 sub update {
-  my ($self, $metric, $value, $sample_rate) = @_;
-  $metric = "$self->{prefix}$metric";
-  $sample_rate = $self->{sample_rate} unless defined $sample_rate;
-  $self->{statsd}->update($metric, $value, $sample_rate);
+  # ($self, $metric, $value, [$sample_rate])
+  $_[0]->_send({ metric => $_[1], value => $_[2], type => "c", sample_rate => $_[3] });
 }
 
 sub timing_ms {
-  my ($self, $metric, $time, $sample_rate) = @_;
-  $metric = "$self->{prefix}$metric";
-  $self->{statsd}->timing($metric, $time, $sample_rate);
+  # ($self, $metric, $time, [$sample_rate])
+  $_[0]->_send({ metric => $_[1], value => $_[2], type => "ms", sample_rate => $_[3] });
 }
 
 sub gauge {
-  my ($self, $metric, $value, $sample_rate) = @_;
-  $metric = "$self->{prefix}$metric";
-  $self->{statsd}->send({ $metric => "$value|g" }, $sample_rate);
+  # ($self, $metric, $value, [$sample_rate])
+  $_[0]->_send({ metric => $_[1], value => $_[2], type => "g", sample_rate => $_[3] });
 }
 
 sub set_add {
-  my ($self, $metric, $value, $sample_rate) = @_;
-  $metric = "$self->{prefix}$metric";
-  $self->{statsd}->send({ $metric => "$value|s" }, $sample_rate);
+  # ($self, $metric, $value, [$sample_rate])
+  $_[0]->_send({ metric => $_[1], value => $_[2], type => "s", sample_rate => $_[3] });
 }
 
 sub timer {
