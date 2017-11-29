@@ -11,3 +11,7 @@ Contributing
 1. rock run dzil test
 1. git push, and submit a pull request
 
+License
+=======
+
+Licensed under the [Perl License](https://dev.perl.org/licenses/) to Andrew Rodland.
